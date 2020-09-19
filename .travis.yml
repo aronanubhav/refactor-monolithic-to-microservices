@@ -20,7 +20,7 @@ install:
   - docker-compose -f Deployment/Docker/docker-compose-build.yaml build --parallel 
 
 deploy:
-  skip_cleanup: true
+  cleanup: true
   provider: script
   script: bash ./deployment/docker_deploy.sh
   on:
