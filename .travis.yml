@@ -25,3 +25,5 @@ deploy:
   script: bash ./deployment/docker_deploy.sh
   on:
     branch: master
+
+
