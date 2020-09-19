@@ -22,7 +22,7 @@ install:
 deploy:
   cleanup: false
   provider: script
-  script: bash ./deployment/docker_deploy.sh
+  script: bash ./Deployment/docker_deploy.sh
   on:
     branch: master
 
