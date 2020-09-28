@@ -1,56 +1,32 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: udacity-restapi-user
   labels:
-    service: backend-user
-  name: backend-user
+    app: udacity-restapi-user
 spec:
-  replicas: 2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udacity-restapi-user
   template:
     metadata:
       labels:
-        service: backend-user
+        app: udacity-restapi-user
     spec:
       containers:
-      - image: aronanubhav/udacity-restapi-user
-        name: backend-user
-        imagePullPolicy: Always
+      - name: udacity-restapi-user
+        image: aronanubhav/udacity-restapi-user
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
-            memory: "1024Mi"
+            cpu: "1.5"
+          requests:
             cpu: "500m"
-        env:
-        - name: URL
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: URL
-        - name: JWT_TOKEN
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: JWT_TOKEN
-        - name: POSTGRES_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRES_DATABASE
-        - name: POSTGRES_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRES_HOST
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: env-secret
-              key: POSTGRES_PASSWORD
-        - name: POSTGRES_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: env-secret
-              key: POSTGRES_USERNAME
-      restartPolicy: Always
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
