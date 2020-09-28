@@ -1,28 +1,32 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: udacity-frontend
   labels:
-    service: frontend
-  name: frontend
+    app: udacity-frontend
 spec:
-  replicas: 2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udacity-frontend
   template:
     metadata:
       labels:
-        service: frontend
-        api: external
+        app: udacity-frontend
     spec:
       containers:
-      - image: aronanubhav/udacity-frontend:local
-        name: frontend
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
+      - name: udacity-frontend
+        image: aronanubhav/udacity-frontend
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
-            memory: "1024Mi"
+            cpu: "1.5"
+          requests:
             cpu: "500m"
-      restartPolicy: Always
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
