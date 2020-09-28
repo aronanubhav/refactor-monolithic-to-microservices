@@ -1,79 +1,32 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: udacity-restapi-feed
   labels:
-    service: backend-feed
-  name: backend-feed
+    app: udacity-restapi-feed
 spec:
-  replicas: 3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udacity-restapi-feed
   template:
     metadata:
       labels:
-        service: backend-feed
+        app: udacity-restapi-feed
     spec:
       containers:
-      - image: aronanubhav/udacity-restapi-feed
-        name: backend-feed
-        imagePullPolicy: Always
+      - name: udacity-restapi-feed
+        image: aronanubhav/udacity-restapi-feed
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
-            memory: "1024Mi"
+            cpu: "1.5"
+          requests:
             cpu: "500m"
-        env:
-        - name: URL
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: URL
-        - name: AWS_MEDIA_BUCKET
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_MEDIA_BUCKET
-        - name: AWS_PROFILE
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_PROFILE
-        - name: AWS_REGION
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: AWS_REGION
-        - name: JWT_TOKEN
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: JWT_TOKEN
-        - name: POSTGRES_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRES_DATABASE
-        - name: POSTGRES_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: env-config
-              key: POSTGRES_HOST
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: env-secret
-              key: POSTGRES_PASSWORD
-        - name: POSTGRES_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: env-secret
-              key: POSTGRES_USERNAME
-        volumeMounts:
-        - name: aws-secret
-          mountPath: "/root/.aws/"
-          readOnly: true
-      restartPolicy: Always
-      volumes:
-      - name: aws-secret
-        secret:
-          secretName: aws-secret
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
