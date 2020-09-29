@@ -25,4 +25,5 @@ spec:
             cpu: "500m"       
         ports:
         - containerPort: 8080
-      restartPolicy: Always
+          initialDelaySeconds: 3
+          periodSeconds: 300000
