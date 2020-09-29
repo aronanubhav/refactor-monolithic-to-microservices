@@ -1,29 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-        name: reverseproxy
+  name: reverseproxy
+  labels:
+    app: reverseproxy
 spec:
-  replicas: 5
+  replicas: 1
   selector:
-          matchLabels:
-                  app: reverseproxy
+    matchLabels:
+      app: reverseproxy
   template:
     metadata:
       labels:
         app: reverseproxy
     spec:
       containers:
-      - image: aronanubhav/reverseproxy
-        name: reverseproxy
-        imagePullPolicy: Always          
+      - name: reverseproxy
+        image: aronanubhav/reverseproxy
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
-            memory: "1024Mi"
-            cpu: "500m"       
+            cpu: "1.5"
+          requests:
+            cpu: "500m"
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
           initialDelaySeconds: 3
-          periodSeconds: 300000
+          periodSeconds: 3
