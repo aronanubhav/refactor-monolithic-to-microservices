@@ -1,4 +1,6 @@
-  
+# Use NodeJS base image
+FROM node:13
+
 FROM beevelop/ionic AS ionic
 
 WORKDIR /usr/src/app
